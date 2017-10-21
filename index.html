@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Document</title>
+<script type="text/javascript">
+    function function_submit(){ 
+        var obj=readinput();
+        $.ajax({
+            data:{name:obj.name, email:obj.email, age:obj.age, address:obj.address, mobile:obj.mobile},
+            url: 'save.php',
+            method: 'POST', // or GET
+            success: function(msg) {
+                function_retrive()
+            }
+        });
+    }
+
+    function readinput(){
+        var id1= document.getElementById("textId").value;
+        var name =document.getElementById("textName").value;
+        var Email =document.getElementById("textEmail").value;
+        var Age =document.getElementById("textAge").value;
+        var Address =document.getElementById("textAddress").value;
+        var Mobile =document.getElementById("textMobile").value;
+
+        return {"id":id1,"name":name, "email":Email, "age":Age,"address":Address, "mobile":Mobile}
+    }
+
+    function function_retrive(){
+        $.ajax({
+            // data:{name:name, email:Email, age:Age, address:Address, mobile:Mobile},
+            url: 'fetchdetails.php',
+            method: 'GET', // or GET
+            success: function(result) {
+                // alert(msg);
+                console.log(result);
+                var data =JSON.parse(result);
+                var str = "";
+                for(var i=0;i<data.length;i++){
+                    var temp=  JSON.stringify(data[i]);
+                    str += "<tr><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td>"+data[i].email+"</td><td>"+data[i].age+"</td><td>"+data[i].address+"</td><td>"+data[i].mobile+"</td><td><button onclick='editRowData("+ temp +")'>Edit</button></td><td><button onclick='DeleteRowData("+data[i].id+")'>Delete</button></td></tr>" ; 
+                }
+
+
+            document.getElementById("tableBody").innerHTML = str;
+            }
+        });
+    }
+
+    function editRowData(obj){
+       
+        console.log(obj);
+         document.getElementById("textId").value=obj.id;
+         document.getElementById("textName").value=obj.name; 
+         document.getElementById("textEmail").value=obj.email;
+         document.getElementById("textAge").value=obj.age;
+         document.getElementById("textAddress").value=obj.address;
+         document.getElementById("textMobile").value=obj.mobile;
+    
+
+         var str ="<button onclick='updateValue()'>Upadte</button>";
+         document.getElementById("tableBody").innerHTML = str;
+    }
+
+    function updateValue(){ 
+         var objEdit=readinput()
+         $.ajax({
+            data:{id:objEdit.id,name:objEdit.name, email:objEdit.email, age:objEdit.age, address:objEdit.address, mobile:objEdit.mobile},
+            url: 'rowEdit.php',
+            method: 'POST', // or GET
+            success: function(msg) {
+                function_retrive()
+            }
+        });
+    }
+
+    function DeleteRowData(id){
+        $.ajax({
+            data:"id="+id,
+            url: 'deletedata.php',
+            method: 'GET', // or GET
+            success: function(msg) {
+                function_retrive()
+            }
+        });
+
+    }
+
+</script>
+    
+    
+</head>
+<body onload="function_retrive()">
+        <label>ID </label>
+        <input type="text"/ id="textId">
+       <label>Name </label>
+       <input type="text"/ id="textName">
+       <label >Email</label>
+       <input type="text" id="textEmail">
+       <label >Age</label>
+       <input type="text" id ="textAge">
+       <label >Address</label>
+       <input type="text" id="textAddress">
+       <label >mobile number</label>
+       <input type="text" id="textMobile">
+       <button onclick="function_submit()">Submit</button>
+       <button onclick="function_retrive()">retrive</button>
+
+        <table>
+        <tr>
+            <th>ID</th>
+            <th>Name </th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Mobile</th>
+            <th>Action</th>
+            <th>Action</th>
+            <th>Action</th>
+        </tr>
+        <!-- <tr>
+            <td>2</td>
+            <td>Yaseen</td>
+            <td>yaseen@gmail.com</td>
+            <td>25</td>
+            <td>sgdjhsgdjs</td>
+            <td>978456465</td>
+        </tr> -->
+        <tbody id="tableBody"></tbody>
+        </table>
+
+</body>
+</html>
